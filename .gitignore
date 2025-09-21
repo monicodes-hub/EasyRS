@@ -1,0 +1,53 @@
+# ========================
+# Python
+# ========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pyt
+*.env
+*.venv
+env/
+venv/
+ENV/
+*.egg-info/
+*.egg
+
+# ========================
+# Build / Distribución
+# ========================
+build/
+dist/
+
+# ========================
+# Archivos generados de PySide6 / Qt
+# ========================
+*.qrc.py
+*.ui.py
+*.qmlc
+*.moc
+*.rcc
+
+# ========================
+# Recursos temporales o filtrados
+# ========================
+chats_filtrados_pdf/
+reportes_filtrados_pdf/
+resources/
+
+# ========================
+# Ejecutables / Iconos
+# ========================
+*.exe
+*.ico
+
+# ========================
+# Logs, temporales y sistema
+# ========================
+*.log
+*.tmp
+*.bak
+*.swp
+.DS_Store

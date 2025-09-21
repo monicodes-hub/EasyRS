@@ -1,0 +1,90 @@
+/* Main window background */
+QMainWindow, QWidget {
+    background-color: #a595fa;
+}
+
+/* GroupBox: slightly darker, rounded corners, SEGOE UI, 14pt, white text */
+QGroupBox {
+
+    border: 2px solid #7c6fc2;
+    border-radius: 20px; /* More rounded */
+    margin-top: 20px;    /* More space for the title */
+    padding: 8px; /* Extra top padding for title */
+    font-family: 'Segoe UI', Segoe, Arial, sans-serif;
+    font-size: 14pt;
+    color: #fff;
+}
+
+/* GroupBox title: white, bold, with background and padding */
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 20px;
+    padding: 0 5px 0 5px;
+    color: #fff;
+    font-weight: bold;
+    font-family: 'Segoe UI', Segoe, Arial, sans-serif;
+    font-size: 14pt;
+    border-radius: 10px;
+}
+
+/* Frames: transparent to let main bg show through */
+QFrame {
+    background: transparent;
+    border: none;
+}
+
+/* Buttons: only for button1_routing and button2_conversations, white text */
+QPushButton#button1_routing, QPushButton#button2_conversations {
+    font-family: 'Segoe UI', Segoe, Arial, sans-serif;
+    font-size: 14pt;
+    color: #fff;
+    background-color: #7c6fc2;
+    border-radius: 10px;
+    padding: 8px 16px;
+
+    border: 2px solid transparent;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+QPushButton#button1_routing:hover, QPushButton#button2_conversations:hover {
+    background-color: #9587e3;
+    border: 2px solid #7c6fc2;
+    box-shadow: 0 0 0 2px #fff;
+}
+QPushButton#button1_routing:pressed, QPushButton#button2_conversations:pressed {
+    background-color: #6a5fb2;
+}
+
+/* Other buttons: subtle style, rounded, white text */
+QPushButton {
+    background-color: #7c6fc2;
+    color: #fff;
+    border-radius: 10px;
+    padding: 6px 18px;
+    font-size: 15px;
+
+    border: 2px solid transparent;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+QPushButton:hover {
+    background-color: #9587e3;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #fff;
+}
+QPushButton:pressed {
+    background-color: #6a5fb2;
+}
+
+/* Labels: white text for headers/footers */
+QLabel#logo_header, QLabel#logo_footer {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Status bar: match main color, white text */
+QStatusBar {
+    background: #a595fa;
+    color: #fff;
+    border-top: 1px solid #7c6fc2;
+}

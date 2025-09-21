@@ -1,0 +1,122 @@
+/* Dialog background */
+QDialog {
+    background-color: #a595fa;
+}
+
+/* GroupBoxes: slightly darker, rounded, white font */
+QGroupBox {
+    border: 2px solid #7c6fc2;
+    border-radius: 20px;
+    margin-top: 20px;
+    padding: 16px 10px 10px 10px; /* More top padding for title */
+    font-family: 'Segoe UI', Segoe, Arial, sans-serif;
+    font-size: 14pt;
+    color: #fff;
+}
+
+/* GroupBox title: left, no background, white, bold */
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 15px;
+    padding: 0 5px;
+    color: #fff;
+    font-weight: bold;
+    font-family: 'Segoe UI', Segoe, Arial, sans-serif;
+    font-size: 12pt;
+}
+
+/* ComboBox: white text, rounded, matching background */
+QComboBox#select_agent {
+    font-family: 'Segoe UI', Segoe, Arial, sans-serif;
+    font-size: 12pt;
+    color: #fff;
+    background-color: #7c6fc2;
+    border-radius: 10px;
+    padding: 0px 8px;
+    border: 5px solid #7c6fc2;
+}
+QComboBox#select_agent QAbstractItemView {
+    background: #9587e3;
+    color: #fff;
+    selection-background-color: #7c6fc2;
+    selection-color: #fff;
+}
+
+QRadioButton#conversations_all::indicator,
+QRadioButton#conversations_unanswered::indicator {
+    width: 13px;
+    height: 13px;
+    border-radius: 8px;
+    border: 2px solid #7c6fc2;
+    background-color: transparent;
+}
+
+QRadioButton#conversations_all::indicator:checked,
+QRadioButton#conversations_unanswered::indicator:checked {
+    background-color: #7c6fc2;
+    border: 2px solid #fff;
+}
+
+/* Radio buttons: white text, larger font */
+QRadioButton#conversations_all, QRadioButton#conversations_unanswered {
+    font-family: 'Segoe UI', Segoe, Arial, sans-serif;
+    font-size: 12pt;
+    color: #fff;
+}
+
+/* OK Button: prominent, white text, hover effect */
+QPushButton#ok_button {
+    font-family: 'Segoe UI', Segoe, Arial, sans-serif;
+    font-size: 15pt;
+    color: #fff;
+    background-color: #7c6fc2;
+    border-radius: 10px;
+    padding: 6px 18px;
+    font-weight: bold;
+    border: 2px solid transparent;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+QPushButton#ok_button:hover {
+    background-color: #9587e3;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #fff;
+}
+QPushButton#ok_button:pressed {
+    background-color: #6a5fb2;
+}
+
+/* CANCEL Button: prominent, white text, hover effect */
+QPushButton#cancel_button {
+    font-family: 'Segoe UI', Segoe, Arial, sans-serif;
+    font-size: 15pt;
+    color: #fff;
+    background-color: #7c6fc2;
+    border-radius: 10px;
+    padding: 6px 18px;
+    font-weight: bold;
+    border: 2px solid transparent;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+QPushButton#cancel_button:hover {
+    background-color: #9587e3;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #fff;
+}
+QPushButton#cancel_button:pressed {
+    background-color: #6a5fb2;
+}
+
+
+/* Header/Footer labels: white, bold, larger */
+QLabel#logo_header, QLabel#logo_footer {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Frames: transparent */
+QFrame {
+    background: transparent;
+    border: none;
+}

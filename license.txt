@@ -1,0 +1,48 @@
+Easy RepSift (EasyRS) – Licencia de Uso Interno
+===============================================
+
+Copyright (c) 2025 Monica S. Henrique Laranjeiro
+
+Esta aplicación de software, Easy RepSift (EasyRS), se proporciona exclusivamente para el uso
+interno por parte de los miembros autorizados del equipo Easydona, dentro de la organización
+Nextclinics Spain.
+
+EasyRS ha sido diseñada para generar informes PDF a partir de datos HTML con el objetivo de
+agilizar y filtrar flujos de trabajo diarios. Fue desarrollada utilizando Python y Qt Designer,
+con asistencia de herramientas de inteligencia artificial como GitHub Copilot.
+
+Al utilizar este software, aceptas los siguientes términos:
+
+1. Uso Restringido
+   ----------------
+   Esta aplicación está licenciada únicamente para su uso interno dentro de Easydona / Nextclinics
+   Spain. Está prohibida la distribución, copia, modificación o ingeniería inversa fuera de esta
+   organización sin autorización previa y por escrito de la autora.
+
+2. Sin Garantías
+   --------------
+   Este software se proporciona "tal cual", sin ningún tipo de garantía. La autora no ofrece
+   garantías sobre su rendimiento, fiabilidad o idoneidad para un propósito específico.
+
+3. Propiedad Intelectual
+   -----------------------
+   A menos que se indique lo contrario de forma explícita, la propiedad intelectual y la autoría de
+   EasyRS permanecen con la desarrolladora original, Monica S. Henrique Laranjeiro.
+
+4. Contribuciones de Terceros
+   ----------------------------
+   Este software puede incluir código o sugerencias generadas por herramientas de inteligencia
+   artificial (por ejemplo, GitHub Copilot). La autora ha revisado y adaptado dicho código para
+   asegurar su funcionalidad dentro de la aplicación.
+
+5. Modificaciones y Soporte
+   --------------------------
+   Cualquier modificación o solicitud de soporte técnico debe gestionarse internamente por el equipo
+   Easydona o en coordinación con la desarrolladora original, según corresponda.
+
+--------------------------------------------------------------------------------
+
+Esta licencia aplica únicamente al uso interno por parte de los miembros autorizados de Easydona /
+Nextclinics Spain y no debe distribuirse fuera de la organización sin autorización expresa.
+
+

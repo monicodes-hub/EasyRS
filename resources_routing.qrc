@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>resources/app_logo.png</file>
+    <file>resources/close.png</file>
+    <file>resources/exit.png</file>
+    <file>resources/folder_open.png</file>
+    <file>resources/ok.png</file>
+  </qresource>
+  <qresource prefix="logos">
+    <file>resources/footer_logo.png</file>
+    <file>resources/header_logo.png</file>
+  </qresource>
+</RCC>
