@@ -165,6 +165,10 @@ def main(file_path=None, agent_name=None, conv_mode=None):
         print("Formato de archivo no soportado. Usa .xls, .xlsx o .html")
         return
 
+    print(f"DEBUG: Loaded dataframe with {len(df)} rows, columns: {list(df.columns)}")
+    if not df.empty:
+        print(f"DEBUG: Sample CHANNEL values: {df['CHANNEL'].astype(str).head(5).tolist()}")
+
     # 3. Extract agent names
     agent_pattern = re.compile(r"AGENT:\s*([^,]+)")
     agent_names = set()
@@ -172,6 +176,8 @@ def main(file_path=None, agent_name=None, conv_mode=None):
         for match in agent_pattern.findall(val):
             agent_names.add(match.strip())
     agent_names = sorted(agent_names)
+
+    print(f"DEBUG: Extracted agents: {agent_names}")
 
     if not agent_names:
         print("No se encontraron agentes en la columna CHANNEL.")
@@ -204,6 +210,10 @@ def main(file_path=None, agent_name=None, conv_mode=None):
     )
     agent_rows = df[agent_mask]
 
+    print(f"DEBUG: Found {len(agent_rows)} rows for agent {agent_name}")
+    if not agent_rows.empty:
+        print(f"DEBUG: Sample agent_rows CHANNEL: {agent_rows['CHANNEL'].astype(str).head(3).tolist()}")
+
     if agent_rows.empty:
         print(f"No se encontraron registros para AGENTE: {agent_name}")
         return
@@ -218,9 +228,14 @@ def main(file_path=None, agent_name=None, conv_mode=None):
         elif "CONN_ID" in df.columns and pd.notna(row.get("CONN_ID")):
             chatids.add(normalize_id(row["CONN_ID"]))
 
+    print(f"DEBUG: Extracted chatids: {chatids}")
     if not chatids:
         print("No se encontraron CHATID relacionados con el agente.")
         return
+
+    normalized_conn_ids = df["CONN_ID"].astype(str).apply(normalize_id).unique().tolist() if "CONN_ID" in df.columns else []
+    print(f"DEBUG: Sample normalized CONN_ID values: {normalized_conn_ids[:20]}")
+    print(f"DEBUG: Intersection between extracted chatids and CONN_ID values: {set(normalized_conn_ids) & set(chatids)}")
 
     # 7. Count how many CHATIDs end with TO_NAME == agent_name (console info)
     highlighted_count = 0
@@ -252,6 +267,7 @@ def main(file_path=None, agent_name=None, conv_mode=None):
                 if normalize_text(chat_df.loc[last_idx, "TO_NAME"]) == normalize_text(agent_name):
                     filtered_chatids.add(chatid)
         chatids = filtered_chatids
+        print(f"DEBUG: Filtered unanswered chatids: {len(chatids)}")
 
     if not chatids:
         print("No se encontraron CHATID que cumplan el criterio seleccionado.")
@@ -261,7 +277,9 @@ def main(file_path=None, agent_name=None, conv_mode=None):
     if not os.path.exists(output_pdf_dir):
         os.makedirs(output_pdf_dir)
 
-    all_conv_df = df[df["CONN_ID"].astype(str).apply(normalize_id).isin(chatids)]
+    normalized_conn_series = df["CONN_ID"].astype(str).apply(normalize_id) if "CONN_ID" in df.columns else pd.Series(dtype=str)
+    all_conv_df = df[normalized_conn_series.isin(chatids)]
+    print(f"DEBUG: All CONN_ID count matching chatids: {normalized_conn_series.isin(chatids).sum()}")
     print(f"Exportando conversaciones para {len(chatids)} CHATID(s), total filas: {len(all_conv_df)}")
     if not all_conv_df.empty:
         create_pdf_from_dataframe(all_conv_df, "conversacion", agent_name, chatids, output_pdf_dir)
