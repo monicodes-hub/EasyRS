@@ -5,6 +5,9 @@
     <file>resources/folder_open.png</file>
     <file>resources/ok.png</file>
   </qresource>
+  <qresource prefix="background">
+    <file>resources/background_2.0.png</file>
+  </qresource>
   <qresource prefix="logos">
     <file>resources/footer_logo.png</file>
     <file>resources/header_logo.png</file>

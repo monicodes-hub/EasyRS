@@ -1,0 +1,5 @@
+CHANNEL,FROM,FROM_NAME,TO_NAME,DATE,MESSAGE,CONN_ID,CUSTOMER_ID,CUSTOMER_PHONE
+"AGENT: AgentA, CHATID: 215578526",cliente@email.com,Cliente 1,AgentA,2024-01-01 10:00,"Hola, necesito ayuda",215578526,cust001,555-1001
+"AGENT: AgentA, CHATID: 215578526",agente@empresa.com,AgentA,Cliente 1,2024-01-01 10:30,"Claro, ¿qué necesitas?",215578526,cust001,555-1001
+"AGENT: AgentB, CHATID: 215578527",cliente2@email.com,Cliente 2,AgentB,2024-01-01 11:00,Tengo una consulta,215578527,cust002,555-2001
+"AGENT: AgentB, CHATID: 215578527",agente@empresa.com,AgentB,Cliente 2,2024-01-01 11:30,Te ayudaré,215578527,cust002,555-2001

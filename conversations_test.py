@@ -2,6 +2,7 @@ import pandas as pd
 from fpdf import FPDF
 import os
 import re
+from datetime import datetime
 
 # Normalize IDs so that numeric chat IDs like 215578526.0 match 215578526
 def normalize_id(value):
@@ -134,7 +135,8 @@ def create_pdf_from_dataframe(dataframe, output_filename_base, agent_name, chati
                 pdf.set_fill_color(255, 255, 255)
 
     safe_agent = "".join(c if c.isalnum() else "_" for c in str(agent_name))
-    pdf_filename = os.path.join(output_dir, f"{output_filename_base}_AGENTE_{safe_agent}.pdf")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    pdf_filename = os.path.join(output_dir, f"conversaciones_{safe_agent}_{timestamp}.pdf")
     try:
         pdf.output(pdf_filename)
         print(f"PDF generado con éxito: {pdf_filename}")
@@ -273,7 +275,7 @@ def main(file_path=None, agent_name=None, conv_mode=None):
         print("No se encontraron CHATID que cumplan el criterio seleccionado.")
         return
 
-    output_pdf_dir = "chats_filtrados_pdf"
+    output_pdf_dir = "filtrado_conversaciones_pdf"
     if not os.path.exists(output_pdf_dir):
         os.makedirs(output_pdf_dir)
 

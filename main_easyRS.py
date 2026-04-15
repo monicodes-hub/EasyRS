@@ -121,7 +121,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 conversations.main(file_path, agent_name, conv_mode)
                 downloads = get_downloads_folder()
-                pdf_folder = "chats_filtrados_pdf"
+                pdf_folder = "filtrado_conversaciones_pdf"
                 found = False
                 for f in os.listdir(pdf_folder):
                     if agent_name.replace(" ", "_") in f and f.endswith(".pdf"):
@@ -149,7 +149,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 routing.main(file_path, rp_id_list)
                 downloads = get_downloads_folder()
-                pdf_folder = "reportes_filtrados_pdf"
+                pdf_folder = "filtrado_routing_pdf"
                 # Ensure the output folder exists
                 if not os.path.exists(pdf_folder):
                     os.makedirs(pdf_folder)

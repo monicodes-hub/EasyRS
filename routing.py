@@ -2,6 +2,7 @@
 import pandas as pd
 from fpdf import FPDF
 import os # Para manejo de rutas y directorios
+from datetime import datetime
 
 def create_pdf_from_dataframe(dataframe, output_filename_base, rp_id_value, output_dir):
     """
@@ -101,10 +102,11 @@ def create_pdf_from_dataframe(dataframe, output_filename_base, rp_id_value, outp
 
     # Guardar el PDF
     safe_rp_id_str = "".join(c if c.isalnum() else "_" for c in str(rp_id_value))
-    pdf_filename = os.path.join(output_dir, f"{output_filename_base}_{safe_rp_id_str}.pdf")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    pdf_filename = os.path.join(output_dir, f"routing_{safe_rp_id_str}_{timestamp}.pdf")
 
     try:
-        pdf.output(pdf_filename, "F")
+        pdf.output(pdf_filename)
         print(f"PDF generado con éxito: {pdf_filename}")
         return pdf_filename
     except Exception as e:
@@ -197,7 +199,7 @@ def main(file_path=None, rp_id_list=None):
         return
 
     # Crear directorio para los PDFs si no existe
-    output_pdf_dir = "reportes_filtrados_pdf"
+    output_pdf_dir = "filtrado_routing_pdf"
     if not os.path.exists(output_pdf_dir):
         os.makedirs(output_pdf_dir)
         print(f"Directorio '{output_pdf_dir}' creado para guardar los PDFs.")

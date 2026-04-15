@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainwindowEsVjWV.ui'
+## Form generated from reading UI file 'mainwindow.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.0
 ##
@@ -213,11 +213,11 @@ class Ui_MainWindow(object):
         self.pushButton.setText("")
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Seleccione el tipo de reporte:", None))
 #if QT_CONFIG(statustip)
-        self.pushButton_2.setStatusTip(QCoreApplication.translate("MainWindow", u"Seleccione el archivo que empiece por \"HistVR\"", None))
+        self.pushButton_2.setStatusTip(QCoreApplication.translate("MainWindow", u"Seleccione el archivo 9. CDR Routing interacciones y chatbots", None))
 #endif // QT_CONFIG(statustip)
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u" Diagram Reports - CDR Routing", None))
 #if QT_CONFIG(statustip)
-        self.pushButton_3.setStatusTip(QCoreApplication.translate("MainWindow", u"Seleccione el archivo que empiece por \"HistChat\"", None))
+        self.pushButton_3.setStatusTip(QCoreApplication.translate("MainWindow", u"Seleccione el archivo 2. Conversaciones", None))
 #endif // QT_CONFIG(statustip)
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u" Interacciones y Chats - Conversaciones", None))
         self.label_2.setText("")
