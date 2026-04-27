@@ -35,6 +35,9 @@ dist/
 # ========================
 chats_filtrados_pdf/
 reportes_filtrados_pdf/
+filtrado_conversaciones_pdf/
+filtrado_routing_pdf/
+reportes_filtrados_pdf/
 filtrado_conversaciones_pdf
 filtrado_routing_pdf
 resources/
