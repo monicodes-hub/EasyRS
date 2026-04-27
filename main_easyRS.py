@@ -1,6 +1,7 @@
 import sys
 import os
 import shutil
+import re
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QDialog, QFileDialog, QMessageBox
 )
@@ -8,24 +9,30 @@ from PySide6.QtCore import QTimer
 from interface.ui_mainwindow import Ui_MainWindow
 from interface.ui_conversations import Ui_Dialog as Ui_ConversationsDialog
 from interface.ui_routing import Ui_Dialog as Ui_RoutingDialog
+
+# Imports de recursos generados por pyrcc
 import resources_mainwindow_rc
 import resources_conversations_rc
 import resources_routing_rc
+
+# Imports de lógica de negocio
 import conversations
 import routing
-import re
+
+# =================================================================
+# CONTROL DE VERSIÓN
+# Cada vez que hagas una mejora, solo cambia este número aquí.
+# =================================================================
+__version__ = "1.0.0"
 
 def get_downloads_folder():
     if sys.platform == "win32":
         import ctypes
         from ctypes import wintypes, windll
-
         _SHGetKnownFolderPath = windll.shell32.SHGetKnownFolderPath
         _SHGetKnownFolderPath.argtypes = [
             ctypes.c_void_p, wintypes.DWORD, wintypes.HANDLE, ctypes.POINTER(ctypes.c_wchar_p)
         ]
-
-        # FOLDERID_Downloads from KnownFolders.h
         FOLDERID_Downloads = ctypes.c_char_p(b'{374DE290-123F-4565-9164-39C4925E467B}')
         path_ptr = ctypes.c_wchar_p()
         result = _SHGetKnownFolderPath(FOLDERID_Downloads, 0, 0, ctypes.byref(path_ptr))
@@ -33,23 +40,18 @@ def get_downloads_folder():
             downloads = path_ptr.value
             ctypes.windll.ole32.CoTaskMemFree(path_ptr)
             return downloads
-        else:
-            # fallback to home directory
-            return os.path.join(os.path.expanduser("~"), "Downloads")
-    else:
         return os.path.join(os.path.expanduser("~"), "Downloads")
+    return os.path.join(os.path.expanduser("~"), "Downloads")
 
 class ConversationsDialog(QDialog, Ui_ConversationsDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        # Connect your custom buttons to accept/reject
         self.ok_button.clicked.connect(self.accept)
         self.cancel_button.clicked.connect(self.reject)
 
     def get_values(self):
         agent = self.select_agent.currentText()
-        # Return conv_mode as string, to match conversations.py logic
         mode = "1" if self.conversations_all.isChecked() else "2"
         return agent, mode
 
@@ -57,7 +59,6 @@ class RoutingDialog(QDialog, Ui_RoutingDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        # Connect your custom buttons to accept/reject
         self.ok_button.clicked.connect(self.accept)
         self.cancel_button.clicked.connect(self.reject)
 
@@ -68,8 +69,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        # Connect your main window buttons here
-        self.pushButton.clicked.connect(self.close)  # Exit button
+        
+        # =============================================================
+        # TÍTULO DINÁMICO
+        # Esto sobreescribe lo que hayas puesto en Qt Designer.
+        # =============================================================
+        self.setWindowTitle(f"Easy Rep. Sift | Version {__version__}")
+        
+        self.pushButton.clicked.connect(self.close)
         self.pushButton_2.clicked.connect(self.handle_routing)
         self.pushButton_3.clicked.connect(self.handle_conversations)
 
@@ -77,7 +84,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         default_dir = "C:/ipdialbox/rep/"
         if not os.path.exists(default_dir):
             default_dir = os.path.expanduser("~")
-        # Always show all files, HTML, and CSV
         if filter_str is None:
             filter_str = "All Files (*);;HTML Files (*.html);;CSV Files (*.csv)"
         file_path, _ = QFileDialog.getOpenFileName(self, title, default_dir, filter_str)
@@ -92,7 +98,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if file_path.lower().endswith(".html"):
                 df = pd.read_html(file_path)[0]
             elif file_path.lower().endswith(".csv"):
-                # Try comma, then semicolon
                 try:
                     df = pd.read_csv(file_path)
                 except pd.errors.ParserError:
@@ -103,7 +108,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if "CHANNEL" not in df.columns:
                 QMessageBox.critical(self, "Error", "No se encontraron agentes en la columna CHANNEL.")
                 return
-            # Extract only agent names using regex, just like in reports_gui_ps.py
+            
             agent_pattern = re.compile(r"AGENT:\s*([^,]+)")
             agent_names = set()
             for val in df["CHANNEL"].astype(str):
@@ -122,25 +127,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 conversations.main(file_path, agent_name, conv_mode)
                 downloads = get_downloads_folder()
                 pdf_folder = "filtrado_conversaciones_pdf"
-                # Use same safe_agent logic as conversations.py for matching
                 safe_agent = "".join(c if c.isalnum() else "_" for c in str(agent_name))
-                # Find the most recent PDF matching the agent (sorted by modification time)
                 pdf_files = [
                     os.path.join(pdf_folder, f) 
                     for f in os.listdir(pdf_folder) 
                     if safe_agent in f and f.endswith(".pdf")
                 ]
                 if pdf_files:
-                    # Sort by modification time, newest first
                     pdf_files.sort(key=os.path.getmtime, reverse=True)
                     src = pdf_files[0]
                     dst = os.path.join(downloads, os.path.basename(src))
                     shutil.copy(src, dst)
                     QMessageBox.information(self, "Éxito", f"¡PDF generado con éxito!\nGuardado en:\n{dst}")
                 else:
-                    QMessageBox.warning(self, "Advertencia", "¡PDF generado, pero no se encontró el archivo esperado para copiar a Descargas!")
+                    QMessageBox.warning(self, "Advertencia", "¡No se encontró el PDF esperado!")
             except Exception as e:
-                QMessageBox.critical(self, "Error", f"Ocurrió un error en Conversaciones:\n{e}")
+                QMessageBox.critical(self, "Error", f"Error en Conversaciones:\n{e}")
 
     def handle_routing(self):
         file_path = self.select_file("Selecciona archivo de routing")
@@ -156,10 +158,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 routing.main(file_path, rp_id_list)
                 downloads = get_downloads_folder()
                 pdf_folder = "filtrado_routing_pdf"
-                # Ensure the output folder exists
                 if not os.path.exists(pdf_folder):
                     os.makedirs(pdf_folder)
-                found = False
+                
                 pdfs_copied = []
                 for f in os.listdir(pdf_folder):
                     if f.endswith(".pdf"):
@@ -171,9 +172,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     msg = "¡PDF(s) generado(s) con éxito!\nGuardado(s) en:\n" + "\n".join(pdfs_copied)
                     QMessageBox.information(self, "Éxito", msg)
                 else:
-                    QMessageBox.warning(self, "Advertencia", "¡PDF generado, pero no se encontró el archivo esperado para copiar a Descargas!")
+                    QMessageBox.warning(self, "Advertencia", "¡No se encontró el PDF esperado!")
             except Exception as e:
-                QMessageBox.critical(self, "Error", f"Ocurrió un error en Routing:\n{e}")
+                QMessageBox.critical(self, "Error", f"Error en Routing:\n{e}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
