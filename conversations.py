@@ -49,10 +49,11 @@ def create_pdf_from_dataframe(dataframe, output_filename_base, agent_name, chati
     subtitle = f"Se encontraron {count} registros para AGENTE: {agent_name}"
     pdf.cell(0, 8, subtitle.encode('latin-1', 'replace').decode('latin-1'), 0, 1, 'C')
 
-    # Count yellow-highlighted conversations
+    # Count yellow-highlighted conversations (convert once for efficiency)
+    conn_id_normalized = dataframe["CONN_ID"].astype(str).apply(normalize_id)
     highlighted_count = 0
     for chatid in chatids:
-        chat_df = dataframe[dataframe["CONN_ID"].astype(str).apply(normalize_id) == normalize_id(chatid)]
+        chat_df = dataframe[conn_id_normalized == normalize_id(chatid)]
         if not chat_df.empty and "TO_NAME" in chat_df.columns:
             last_idx = chat_df.index[-1]
             if normalize_text(chat_df.loc[last_idx, "TO_NAME"]) == normalize_text(agent_name):
@@ -66,12 +67,13 @@ def create_pdf_from_dataframe(dataframe, output_filename_base, agent_name, chati
 
     dataframe = dataframe.fillna("")
     df_str = dataframe.astype(str)
+    conn_id_normalized = dataframe["CONN_ID"].astype(str).apply(normalize_id)
     headers = df_str.columns
     col_widths = [max_col_widths.get(col, 30) for col in headers]
     cell_height = 6
 
     for chatid in chatids:
-        chat_df = df_str[df_str["CONN_ID"].astype(str).apply(normalize_id) == normalize_id(chatid)]
+        chat_df = df_str[conn_id_normalized == normalize_id(chatid)]
         if chat_df.empty:
             continue
 
@@ -159,18 +161,30 @@ def main(file_path=None, agent_name=None, conv_mode=None):
         df = pd.read_excel(file_path)
     elif file_path.lower().endswith('.html'):
         dfs = pd.read_html(file_path)
-        if not dfs:
-            print("No se encontraron tablas en el archivo HTML.")
+        df = None
+        for table in dfs:
+            table.columns = table.columns.str.strip()
+            if "CHANNEL" in table.columns and "CONN_ID" in table.columns:
+                df = table
+                break
+        if df is None and dfs:
+            dfs[0].columns = dfs[0].columns.str.strip()
+            df = dfs[0]
+        if df is None:
+            print("No se encontraron tablas con las columnas requeridas en el archivo HTML.")
             return
-        df = dfs[0]
     else:
         print("Formato de archivo no soportado. Usa .xls, .xlsx o .html")
         return
 
-    # 3. Extract agent names
+    # 3. Convert CHANNEL to string once for efficiency
+    channel_str = df["CHANNEL"].astype(str)
+    conn_id_str = df["CONN_ID"].astype(str)
+    
+    # 4. Extract agent names
     agent_pattern = re.compile(r"AGENT:\s*([^,]+)")
     agent_names = set()
-    for val in df["CHANNEL"].astype(str):
+    for val in channel_str:
         for match in agent_pattern.findall(val):
             agent_names.add(match.strip())
     agent_names = sorted(agent_names)
@@ -201,7 +215,7 @@ def main(file_path=None, agent_name=None, conv_mode=None):
     print(f"Has seleccionado el agente: {agent_name}")
 
     # 5. Find all rows where CHANNEL contains AGENT: agent_name
-    agent_mask = df["CHANNEL"].astype(str).str.contains(
+    agent_mask = channel_str.str.contains(
         rf"AGENT:\s*{re.escape(agent_name)}\s*(,|$)", regex=True
     )
     agent_rows = df[agent_mask]
@@ -225,9 +239,10 @@ def main(file_path=None, agent_name=None, conv_mode=None):
         return
 
     # 7. Count how many CHATIDs end with TO_NAME == agent_name (console info)
+    conn_id_normalized = df["CONN_ID"].astype(str).apply(normalize_id)
     highlighted_count = 0
     for chatid in chatids:
-        chat_df = df[df["CONN_ID"].astype(str).apply(normalize_id) == normalize_id(chatid)]
+        chat_df = df[conn_id_normalized == normalize_id(chatid)]
         if not chat_df.empty and "TO_NAME" in chat_df.columns:
             last_idx = chat_df.index[-1]
             if normalize_text(chat_df.loc[last_idx, "TO_NAME"]) == normalize_text(agent_name):
@@ -245,10 +260,12 @@ def main(file_path=None, agent_name=None, conv_mode=None):
                 break
             print("Opción inválida. Elige 1 o 2.")
 
+    # 7. Filter by conv_mode if needed
     if conv_mode == "2":
         filtered_chatids = set()
+        agent_name_norm = normalize_text(agent_name)
         for chatid in chatids:
-            chat_df = df[df["CONN_ID"].astype(str).apply(normalize_id) == normalize_id(chatid)]
+            chat_df = df[conn_id_str.apply(normalize_id) == normalize_id(chatid)]
             if not chat_df.empty and "TO_NAME" in chat_df.columns:
                 last_idx = chat_df.index[-1]
                 if normalize_text(chat_df.loc[last_idx, "TO_NAME"]) == normalize_text(agent_name):
@@ -263,12 +280,11 @@ def main(file_path=None, agent_name=None, conv_mode=None):
     if not os.path.exists(output_pdf_dir):
         os.makedirs(output_pdf_dir)
 
-    all_conv_df = df[df["CONN_ID"].astype(str).apply(normalize_id).isin(chatids)]
-    print(f"Exportando conversaciones para {len(chatids)} CHATID(s), total filas: {len(all_conv_df)}")
+    all_conv_df = df[conn_id_str.apply(normalize_id).isin(chatids)]
     if not all_conv_df.empty:
-        create_pdf_from_dataframe(all_conv_df, "conversacion", agent_name, chatids, output_pdf_dir)
-    else:
-        print("No se encontraron filas para los CHATID seleccionados.")
+        pdf_file = create_pdf_from_dataframe(all_conv_df, "conversacion", agent_name, chatids, output_pdf_dir)
+        return pdf_file
+    return None
 
 if __name__ == "__main__":
     main()

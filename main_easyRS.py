@@ -122,16 +122,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 conversations.main(file_path, agent_name, conv_mode)
                 downloads = get_downloads_folder()
                 pdf_folder = "filtrado_conversaciones_pdf"
-                found = False
-                for f in os.listdir(pdf_folder):
-                    if agent_name.replace(" ", "_") in f and f.endswith(".pdf"):
-                        src = os.path.join(pdf_folder, f)
-                        dst = os.path.join(downloads, f)
-                        shutil.copy(src, dst)
-                        QMessageBox.information(self, "Éxito", f"¡PDF generado con éxito!\nGuardado en:\n{dst}")
-                        found = True
-                        break
-                if not found:
+                # Use same safe_agent logic as conversations.py for matching
+                safe_agent = "".join(c if c.isalnum() else "_" for c in str(agent_name))
+                # Find the most recent PDF matching the agent (sorted by modification time)
+                pdf_files = [
+                    os.path.join(pdf_folder, f) 
+                    for f in os.listdir(pdf_folder) 
+                    if safe_agent in f and f.endswith(".pdf")
+                ]
+                if pdf_files:
+                    # Sort by modification time, newest first
+                    pdf_files.sort(key=os.path.getmtime, reverse=True)
+                    src = pdf_files[0]
+                    dst = os.path.join(downloads, os.path.basename(src))
+                    shutil.copy(src, dst)
+                    QMessageBox.information(self, "Éxito", f"¡PDF generado con éxito!\nGuardado en:\n{dst}")
+                else:
                     QMessageBox.warning(self, "Advertencia", "¡PDF generado, pero no se encontró el archivo esperado para copiar a Descargas!")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Ocurrió un error en Conversaciones:\n{e}")
