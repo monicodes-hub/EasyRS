@@ -10,7 +10,7 @@ from PySide6.QtCore import Qt, QThread, Signal
 # Configuración: Reemplaza con tus datos reales de GitHub
 USER = "monicodes-hub"
 REPO = "https://github.com/monicodes-hub/EasyRS"
-URL_JSON = f"https://raw.githubusercontent.com/{USER}/{REPO}/main/version.json"
+URL_JSON = f"https://raw.githubusercontent.com/monicodes-hub/EasyRS/refs/heads/main/version.json"
 EXE_PRINCIPAL = "EasyRS.exe"
 
 class UpdateWorker(QThread):
